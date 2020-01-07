@@ -12,7 +12,7 @@ There are 2 chief kinds of keymaps on Linux.
     - Files live in `/usr/share/kbd/keymaps`, one file per layout.
 * `xkb`.
     - Created for X Windows, but is also used in Wayland.
-    - See `xkeyboard-config`.
+    - See `man xkeyboard-config`.
     - A variety of crufty tools. Wayland makes use of the `xkbcommon` library, but the tools
       mostly won't work.
     - Files live in `/usr/share/X11/xkb`, one file per language. Inside a file, a bunch of
@@ -24,14 +24,29 @@ There are 2 chief kinds of keymaps on Linux.
 
 A Wayland compositor would normally be able to consult an `xkb` keymap, and even allow for
 switching between several, automatically locating the keymaps corresponding to (layout, variant)
-pairs in the file system. To simplify and modularize things, we will not touch those files, but
-rather create our own monolithic file with all the keymaps we would need.
+pairs in the file system. To simplify and modularize things, I will not touch those files, but
+rather create our own monolithic file with all the keymaps I would need.
+
+I am going to use `klfc`.
+
+1. Extract keymaps from `xkb`'s database to `klfc`'s format.
+1. Edit them as desired.
+1. Rename them to their own namespace.
+1. The arrow `xkbcomp . setxkbmap` creates a _"compiled layout"_ that I will be able to load in
+   Sway with `input ... xkb_file ...`, as described in `man sway-input`. Then I could bind
+   several independent layouts to a range of F keys, as usual.
 
 ## Tips and tricks.
 
 ### Create a PDF picture of the keyboard layout:
 
-    setxkbmap -print [layout] [variant] > setxkbmap.out
+    setxkbmap -model [model] -print [layout] [variant] > setxkbmap.out
     xkbcomp -xkm setxkbmap.out
     xkbprint -label symbols setxkbmap.xkm xkbprint.ps
     ps2pdf xkbprint.{ps,pdf}
+
+For example, a model of the keyboard used on HP laptops may be called `hpmini110`. A list may be
+found in `/usr/share/X11/xkb/rules/evdev`.
+
+Also, you can use `-I` switch to `setxkbmap` to _"include"_ additional directories with custom
+layout files.
