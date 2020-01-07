@@ -36,6 +36,18 @@ I am going to use `klfc`.
    Sway with `input ... xkb_file ...`, as described in `man sway-input`. Then I could bind
    several independent layouts to a range of F keys, as usual.
 
+### Project workflow.
+
+I must establish a directory structure of some sort, and put it under version control. Some parts
+should be auto-generated, so evidently I must have scripts.
+
+The workflow is thus:
+
+1. Extract keymaps. Artifact: `klfc` `json` files.
+2. Hack on them. Evidently `json` is my source code.
+3. Compile with `xkbcomp . setxkbmap`, as noted previously.
+   - I should put in place a compiler script.
+
 ## Tips and tricks.
 
 ### Create a PDF picture of the keyboard layout:
