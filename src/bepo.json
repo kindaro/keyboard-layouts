@@ -6,7 +6,7 @@
   ],
   "shiftlevels": [ "None", "Shift", "AltGr", "Shift+AltGr" ],
   "keys": [
-    { "pos": "CapsLock", "letters": [ "U+2002", "Compose" ] },
+    { "pos": "CapsLock", "letters": [ " ", "Compose" ] },
     { "pos": "NumLock", "letters": [ "NumLock" ] },
     { "pos": "KP_Enter", "letters": [ "KP_Enter" ] },
     { "pos": "KP_Eq", "letters": [ "KP_Eq" ] },
