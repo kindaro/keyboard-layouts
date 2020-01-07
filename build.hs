@@ -38,13 +38,13 @@ compile targetDir x = do
 
 build :: _ => Path Abs Dir -> Path Abs Dir -> Path Rel File -> RIO env ()
 build include targetDir x = do
-    targetFileName  <- x -<.> "xkm"
+    targetFileName  <- x -<.> "xkb"
     let target = targetDir </> targetFileName
     logInfo $ "Building: " <> displayShow x
     ensureDir targetDir
     proc "setxkbmap" ["-I", fromAbsDir include, "-print", fromRelFile x] \setxkbmap' ->
         let setxkbmap = setStdout createPipe setxkbmap'
         in withProcessWait setxkbmap \setxkbmapProcess ->
-            proc "xkbcomp" ["-I" <> fromAbsDir include, "-xkm", "-", fromAbsFile target] \xkbcomp' ->
+            proc "xkbcomp" ["-I" <> fromAbsDir include, "-xkb", "-", fromAbsFile target] \xkbcomp' ->
                 let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
                 in runProcess_ xkbcomp
