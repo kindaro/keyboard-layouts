@@ -42,9 +42,13 @@ build include targetDir x = do
     let target = targetDir </> targetFileName
     logInfo $ "Building: " <> displayShow x
     ensureDir targetDir
-    proc "setxkbmap" ["-I", fromAbsDir include, "-print", fromRelFile x] \setxkbmap' ->
-        let setxkbmap = setStdout createPipe setxkbmap'
-        in withProcessWait setxkbmap \setxkbmapProcess ->
-            proc "xkbcomp" ["-I" <> fromAbsDir include, "-xkb", "-", fromAbsFile target] \xkbcomp' ->
-                let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
-                in runProcess_ xkbcomp
+    proc "setxkbmap"
+        [ "-I", fromAbsDir include
+        , "-types", "complete+" <> fromRelFile x
+        , "-print", fromRelFile x
+        ] \setxkbmap' ->
+            let setxkbmap = setStdout createPipe setxkbmap'
+            in withProcessWait setxkbmap \setxkbmapProcess ->
+                proc "xkbcomp" ["-I" <> fromAbsDir include, "-xkb", "-", fromAbsFile target] \xkbcomp' ->
+                    let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
+                    in runProcess_ xkbcomp
