@@ -15,6 +15,7 @@ import RIO.Process
 import qualified RIO.Text as Text
 import Path
 import Path.IO
+import Control.Monad.Trans.Cont
 
 main :: IO ()
 main = runSimpleApp do
@@ -42,13 +43,18 @@ build include targetDir x = do
     let target = targetDir </> targetFileName
     logInfo $ "Building: " <> displayShow x
     ensureDir targetDir
-    proc "setxkbmap"
+    evalContT do
+    setxkbmap' <- ContT $ proc "setxkbmap"
         [ "-I", fromAbsDir include
         , "-types", "complete+" <> fromRelFile x
         , "-print", fromRelFile x
-        ] \setxkbmap' ->
-            let setxkbmap = setStdout createPipe setxkbmap'
-            in withProcessWait setxkbmap \setxkbmapProcess ->
-                proc "xkbcomp" ["-I" <> fromAbsDir include, "-xkb", "-", fromAbsFile target] \xkbcomp' ->
-                    let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
-                    in runProcess_ xkbcomp
+        ]
+    let setxkbmap = setStdout createPipe setxkbmap'
+    setxkbmapProcess <- ContT $ withProcessWait setxkbmap
+    xkbcomp' <- ContT $ proc "xkbcomp"
+        [ "-I" <> fromAbsDir include
+        , "-xkb"
+        , "-", fromAbsFile target
+        ]
+    let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
+    runProcess_ xkbcomp
