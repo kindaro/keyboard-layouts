@@ -45,16 +45,16 @@ build include targetDir x = do
     ensureDir targetDir
     hasTypes <- doesFileExist (include </> [reldir|types|] </> x)
     evalContT do
-    setxkbmap' <- ContT $ proc "setxkbmap"
-        $  [ "-I", fromAbsDir include ]
-        ++ (if hasTypes then [ "-types", "complete+" <> fromRelFile x ] else [ ])
-        ++ [ "-print", fromRelFile x ]
-    let setxkbmap = setStdout createPipe setxkbmap'
-    setxkbmapProcess <- ContT $ withProcessWait setxkbmap
-    xkbcomp' <- ContT $ proc "xkbcomp"
-        [ "-I" <> fromAbsDir include
-        , "-xkb"
-        , "-", fromAbsFile target
-        ]
-    let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
-    runProcess_ xkbcomp
+        setxkbmap' <- ContT $ proc "setxkbmap"
+            $  [ "-I", fromAbsDir include ]
+            ++ (if hasTypes then [ "-types", "complete+" <> fromRelFile x ] else [ ])
+            ++ [ "-print", fromRelFile x ]
+        let setxkbmap = setStdout createPipe setxkbmap'
+        setxkbmapProcess <- ContT $ withProcessWait setxkbmap
+        xkbcomp' <- ContT $ proc "xkbcomp"
+            [ "-I" <> fromAbsDir include
+            , "-xkb"
+            , "-", fromAbsFile target
+            ]
+        let xkbcomp = setStdin (useHandleClose (getStdout setxkbmapProcess)) xkbcomp'
+        runProcess_ xkbcomp
