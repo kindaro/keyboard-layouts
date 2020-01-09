@@ -43,12 +43,12 @@ build include targetDir x = do
     let target = targetDir </> targetFileName
     logInfo $ "Building: " <> displayShow x
     ensureDir targetDir
+    hasTypes <- doesFileExist (include </> [reldir|types|] </> x)
     evalContT do
     setxkbmap' <- ContT $ proc "setxkbmap"
-        [ "-I", fromAbsDir include
-        , "-types", "complete+" <> fromRelFile x
-        , "-print", fromRelFile x
-        ]
+        $  [ "-I", fromAbsDir include ]
+        ++ (if hasTypes then [ "-types", "complete+" <> fromRelFile x ] else [ ])
+        ++ [ "-print", fromRelFile x ]
     let setxkbmap = setStdout createPipe setxkbmap'
     setxkbmapProcess <- ContT $ withProcessWait setxkbmap
     xkbcomp' <- ContT $ proc "xkbcomp"
