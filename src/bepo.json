@@ -73,6 +73,6 @@
     { "pos": ",", "letters": [ "g", "G", "greek" ] },
     { "pos": ".", "letters": [ "h", "H", "†", "‡" ] },
     { "pos": "/", "letters": [ "f", "F", "ogonek", "ª" ] },
-    { "pos": "Space", "letters": [ " ", " ", "_", " " ] }
+    { "pos": "Space", "letters": [ " ", "_", " ", " " ] }
   ]
 }
