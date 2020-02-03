@@ -1,7 +1,40 @@
 # How to create a custom keymap.
 _(For use on Wayland/Sway.)_
 
-## Introduction.
+
+1. Install [`klfc`][klfc].
+1. Get some layouts: 
+
+        klfc --from-xkb '/usr/share/X11/xkb/symbols/fr(bepo)' > src/fr-bepo.json
+
+1. Rename.
+
+    ```diff
+    --- src/fr-bepo.json	2020-01-12 08:49:33.083220324 +0300
+    +++ src/my-fr-bepo.json	2020-01-12 08:48:22.913221278 +0300
+    @@ -1,6 +1,6 @@
+     {
+       "fullName": "French (Bepo, ergonomic, Dvorak way)",
+    -  "name": "fr-bepo",
+    +  "name": "my-fr-bepo",
+       "singletonKeys": [
+         [ "Alt_R", "AltGr" ]
+       ],
+    ```
+
+1. Edit as desired.
+1. Run `./build.hs` to compile your new layout. The new keymaps will be located under `./xkm`.
+1. Find a way to tell your compositor about the new keymaps. For example, with Sway, add the
+   following to `~/.config/sway/config`:
+
+       bindsym $mod+f1 input * xkb_file /home/me/keymap/xkm/me-fr-bepo.xkb
+
+    Now, pressing `mod + F1` will switch you to the Bépo layout _(without a way back)_.
+
+1. Enjoy!
+
+
+## Theory of keyboard layouts.
 
 Kernel knows the keyboard by key codes, but we humans like to have an action associated with a
 key, such as a symbol appearing at cursor, consistently across programs. So, the desktop
@@ -24,19 +57,22 @@ files. Modifying an existing layout may be challenging, and creating one from 
 insurmountable. Thanks to the hard work of unknown heroes, a sizable collection of keymaps ships
 with a usual Linux; it is called `xkeyboard-config` and the corresponding `man` page can be
 consulted for a complete enumeration. The files would be located under `/usr/share/X11/xkb`, and
-may be consulted with a text viewer, though the structure is non-trivial: for example, all the
+may be examined with a text viewer, though the structure is non-trivial: for example, all the
 various layouts for a given language would be found within one file. A specific layout is referred
 to as, say, `fr(bepo)`, pointing to the file `/usr/share/X11/xkb/symbols/fr` and the section
 `bepo` within it.
 
 ## Editing a layout.
 
-…
-
 A Wayland compositor would normally be able to consult an `xkb` keymap, and even allow for
-switching between several, automatically locating the keymaps corresponding to layout-variant
-pairs in the file system. To simplify and modularize things, I will not touch those files, but
-rather create my own monolithic file with all the keymaps I would need.
+switching between several, automatically locating the keymaps corresponding to a layout-variant
+pair in the file system. For the sake of simplicity, I will not touch any existent files, but
+rather create my own copies, tweak them to my heart's content, then figure out a way to make the
+compositor recognize the newly defined layouts.
+
+[klfc]: https://github.com/39aldo39/klfc
+
+* * *
 
 I am going to use `klfc`.
 
@@ -80,3 +116,6 @@ TODO:
 * Print a picture of a keymap.
 * Set some model.
 * Find or compose a basic Haskell layout.
+    - Build a list of the most frequent 1, 2 & 3 letter long sequences on Hackage not made of
+      letters. _(That would be operators.)_
+* Rename output directory _(and adjust the docs)_.
