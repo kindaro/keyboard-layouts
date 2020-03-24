@@ -4,9 +4,9 @@
   "singletonKeys": [
     [ "Alt_R", "AltGr" ]
   ],
-  "shiftlevels": [ "None", "Shift", "AltGr", "Shift+AltGr" ],
+  "shiftlevels": [ "None", "Shift", "AltGr", "Shift+AltGr", "CapsLock", "Shift+CapsLock" ],
   "keys": [
-    { "pos": "CapsLock", "letters": [ " ", "Compose" ] },
+    { "pos": "CapsLock", "letters": [ " ", "Compose", "CapsLock" ] },
     { "pos": "NumLock", "letters": [ "NumLock" ] },
     { "pos": "KP_Enter", "letters": [ "KP_Enter" ] },
     { "pos": "KP_Eq", "letters": [ "KP_Eq" ] },
